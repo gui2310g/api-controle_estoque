@@ -1,0 +1,50 @@
+package com.example.api.controller;
+
+
+import com.example.api.domain.services.UserService;
+import com.example.api.dto.user.UserRequestDto;
+import com.example.api.dto.user.UserResponseDto;
+import com.example.api.security.AuthService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/usuarios")
+@AllArgsConstructor
+public class UserController {
+
+    private UserService userService;
+
+    private AuthService authService;
+
+    @PostMapping
+    public ResponseEntity<UserResponseDto> create(@RequestBody UserRequestDto request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponseDto>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @PutMapping
+    public ResponseEntity<UserResponseDto> update(Authentication authentication, @RequestBody UserRequestDto request) {
+        return ResponseEntity.ok(userService.update(authService.getAuthenticatedUserId(authentication), request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        userService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
