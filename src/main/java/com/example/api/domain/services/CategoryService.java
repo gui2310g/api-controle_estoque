@@ -1,6 +1,6 @@
 package com.example.api.domain.services;
 
-import com.example.api.common.PaginationType;
+import com.example.api.common.components.PaginationType;
 import com.example.api.domain.entities.Categories;
 import com.example.api.domain.exceptions.ResourceBadRequestException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;

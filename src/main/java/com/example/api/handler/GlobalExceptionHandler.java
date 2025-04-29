@@ -1,6 +1,6 @@
 package com.example.api.handler;
 
-import com.example.api.common.ConversorData;
+import com.example.api.common.components.ConversorData;
 import com.example.api.domain.exceptions.ErrorResponse;
 import com.example.api.domain.exceptions.ResourceBadRequestException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;

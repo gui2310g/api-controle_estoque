@@ -1,17 +1,13 @@
 package com.example.api.domain.services;
 
-import com.example.api.common.GenerateSku;
-import com.example.api.common.PaginationType;
+import com.example.api.common.components.GenerateSku;
+import com.example.api.common.components.PaginationType;
 import com.example.api.domain.entities.Categories;
 import com.example.api.domain.entities.Products;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
-import com.example.api.domain.mappers.CategoryMapper;
 import com.example.api.domain.mappers.ProductMapper;
 import com.example.api.domain.repositories.CategoryRepository;
 import com.example.api.domain.repositories.ProductRepository;
-import com.example.api.domain.repositories.UserRepository;
-import com.example.api.dto.category.CategoryResponseDto;
-import com.example.api.dto.product.ProductDetailsDto;
 import com.example.api.dto.product.ProductRequestDto;
 import com.example.api.dto.product.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +45,10 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
         Products product = productMapper.toEntity(dto);
+
+        if(product.getEstoque_atual() == 0 || product.getEstoque_minimo() == 0)
+            throw new ResourceNotFoundException("Estoque atual ou estoque mínimo não podem ser zero");
+
         product.setCategoria(category);
         product.setSku(GenerateSku.generateSku(dto.getNome()));
         return productMapper.toDto(productRepository.save(product));

@@ -1,4 +1,4 @@
-package com.example.api.common;
+package com.example.api.common.components;
 
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.*;

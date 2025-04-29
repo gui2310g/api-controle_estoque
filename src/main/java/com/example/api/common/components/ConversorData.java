@@ -1,4 +1,4 @@
-package com.example.api.common;
+package com.example.api.common.components;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
