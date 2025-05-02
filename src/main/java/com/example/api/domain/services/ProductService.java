@@ -37,12 +37,12 @@ public class ProductService {
 
     public ProductResponseDto findById(Long id) {
         return productRepository.findById(id).map(productMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado da id " + id));
     }
 
     public ProductResponseDto create(ProductRequestDto dto) {
         Categories category = categoryRepository.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrado"));
 
         Products product = productMapper.toEntity(dto);
 

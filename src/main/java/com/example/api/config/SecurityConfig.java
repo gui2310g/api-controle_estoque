@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/categories/**").hasRole("USER")
                         .requestMatchers("/movements/**").hasRole("USER")
                         .requestMatchers("/products/**").hasRole("USER")
+                        .requestMatchers("/alerts/**").hasRole("USER")
+                        .requestMatchers("/suppliers/**").hasRole("USER")
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/auth").permitAll()
                         .anyRequest()
