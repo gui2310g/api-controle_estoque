@@ -33,25 +33,24 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/usuarios").hasRole("USER")
-                        .requestMatchers("/categories/**").hasRole("USER")
-                        .requestMatchers("/movements/**").hasRole("USER")
-                        .requestMatchers("/products/**").hasRole("USER")
-                        .requestMatchers("/alerts/**").hasRole("USER")
-                        .requestMatchers("/suppliers/**").hasRole("USER")
+                .cors(Customizer.withDefaults()).authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/usuarios", "/auth").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/products", "/categories", "/movements",
+                                "/alerts", "/suppliers").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios", "/products/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/suppliers/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/products/**", "/categories/**",
+                                "/alerts/**", "/suppliers/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,
+                                "/categories/**", "/products/**", "/alerts", "/suppliers/**")
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers("/auth").permitAll()
-                        .anyRequest()
-                        .authenticated()
-                )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                        .anyRequest().authenticated()
+                ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     @Bean
