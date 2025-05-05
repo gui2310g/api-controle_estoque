@@ -36,18 +36,21 @@ public class SecurityConfig {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(Customizer.withDefaults()).authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/usuarios", "/auth").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios", "/auth")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST,
-                                "/products", "/categories", "/movements",
-                                "/alerts", "/suppliers").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/usuarios", "/products/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/suppliers/**").hasRole("ADMIN")
+                                "/products", "/categories", "/movements", "/alerts",
+                                "/suppliers", "/order-items", "/purchase-orders")
+                        .hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios", "/products/**", "/order-items").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/suppliers/**", "/purchase-orders/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,
-                                "/products/**", "/categories/**",
-                                "/alerts/**", "/suppliers/**").hasRole("ADMIN")
+                                "/products/**", "/categories/**", "/alerts/**", "/suppliers/**", "/purchase-orders/**")
+                        .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,
-                                "/categories/**", "/products/**", "/alerts", "/suppliers/**")
+                                "/categories/**", "/products/**", "/alerts", "/suppliers/**", "/order-items/**")
                         .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/purchase-orders/**").hasRole("ADMIN")
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class).build();
