@@ -1,12 +1,14 @@
 package com.example.api.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
 
 @Entity(name = "categories")
 @Data
+@AllArgsConstructor
 public class Categories {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

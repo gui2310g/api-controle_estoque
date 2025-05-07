@@ -1,10 +1,12 @@
 package com.example.api.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity(name = "products")
 @Data
+@AllArgsConstructor
 public class Products {
 
     @Id

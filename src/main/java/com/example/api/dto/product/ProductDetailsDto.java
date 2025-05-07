@@ -1,9 +1,10 @@
 package com.example.api.dto.product;
 
-import com.example.api.dto.category.CategoryResponseDto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class ProductDetailsDto {
     private Long id;
 
