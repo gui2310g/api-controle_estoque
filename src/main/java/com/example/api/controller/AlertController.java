@@ -2,6 +2,7 @@ package com.example.api.controller;
 
 import com.example.api.domain.entities.Alert;
 import com.example.api.domain.services.AlertService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class AlertController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "somente o admin pode deletar o Id")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         alertService.delete(id);
         return ResponseEntity.noContent().build();

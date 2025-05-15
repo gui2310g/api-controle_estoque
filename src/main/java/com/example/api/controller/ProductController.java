@@ -3,6 +3,7 @@ package com.example.api.controller;
 import com.example.api.domain.services.ProductService;
 import com.example.api.dto.product.ProductRequestDto;
 import com.example.api.dto.product.ProductResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
+    @Operation(summary = "somente o usuario pode criar o produto")
     public ResponseEntity<ProductResponseDto> create(@RequestBody ProductRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(dto));
     }
@@ -29,11 +31,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "somente o usuario pode atualizar o produto")
     public ResponseEntity<ProductResponseDto> update(@PathVariable Long id, @RequestBody ProductRequestDto dto) {
         return ResponseEntity.ok(productService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "somente o admin pode deletar o produto")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();
