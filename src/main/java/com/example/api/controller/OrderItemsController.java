@@ -3,10 +3,12 @@ package com.example.api.controller;
 import com.example.api.domain.services.OrderItemsService;
 import com.example.api.dto.PurchaseOrders.OrderItemsRequestDto;
 import com.example.api.dto.PurchaseOrders.OrderItemsResponseDto;
+import com.example.api.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.List;
 public class OrderItemsController {
 
     private final OrderItemsService orderItemsService;
+
+    private final AuthService authService;
 
     @GetMapping
     public ResponseEntity<List<OrderItemsResponseDto>> findAll() {
@@ -29,7 +33,6 @@ public class OrderItemsController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "somente o usuario pode criar o item de pedido")
     public ResponseEntity<OrderItemsResponseDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(orderItemsService.findById(id));
     }
@@ -37,6 +40,11 @@ public class OrderItemsController {
     @GetMapping("/page")
     public ResponseEntity<Page<OrderItemsResponseDto>> findAllByPage(@RequestParam int page, @RequestParam int size) {
         return ResponseEntity.ok(orderItemsService.findAllByPage(page, size));
+    }
+
+    @GetMapping("/findByAuth")
+    public ResponseEntity<List<OrderItemsResponseDto>> findAllByUserLogged(Authentication auth) {
+        return ResponseEntity.ok(orderItemsService.findAllByUserLogged(authService.getAuthenticatedUserId(auth)));
     }
 
     @PutMapping("/{id}")

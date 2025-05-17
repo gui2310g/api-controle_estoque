@@ -3,6 +3,7 @@ package com.example.api.domain.services;
 import com.example.api.common.components.PaginationType;
 import com.example.api.domain.entities.PurchaseOrders;
 import com.example.api.domain.entities.Suppliers;
+import com.example.api.domain.enums.PurchaseStatus;
 import com.example.api.domain.exceptions.ResourceBadRequestException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import com.example.api.domain.mappers.PurchaseOrderMapper;
@@ -47,19 +48,27 @@ public class PurchaseOrdersService {
         return paginationType.findAll(purchaseOrders, page, size, purchaseOrderMapper::toDto);
     }
 
+    public List<PurchaseOrdersResponseDto> findAllByUserLogged(Long userId) {
+        return purchaseOrdersRepository.findById(userId).stream().map(purchaseOrderMapper::toDto).toList();
+    }
+
     public PurchaseOrdersResponseDto findById(Long id) {
-       return purchaseOrdersRepository.findById(id).map(purchaseOrderMapper::toDto)
+        return purchaseOrdersRepository.findById(id).map(purchaseOrderMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
     }
 
     public PurchaseOrdersResponseDto update(Long id, PurchaseOrdersUpdateDto dto) {
-        PurchaseOrders pedidoExistente = purchaseOrdersRepository.findById(id)
+        PurchaseOrders pedido = purchaseOrdersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
-        pedidoExistente.setStatus(dto.getStatus());
+        pedido.setStatus(dto.getStatus());
 
-        return purchaseOrderMapper.toDto(purchaseOrdersRepository.save(pedidoExistente));
+        if (pedido.getStatus().equals(PurchaseStatus.APROVADO) || pedido.getStatus().equals(PurchaseStatus.REPROVADO))
+            throw new ResourceBadRequestException("Nao se pode atualizar quando o status é APROVADO ou REPROVADO");
+
+        return purchaseOrderMapper.toDto(purchaseOrdersRepository.save(pedido));
     }
+
     public void delete(Long id) {
         PurchaseOrders pedido = purchaseOrdersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));

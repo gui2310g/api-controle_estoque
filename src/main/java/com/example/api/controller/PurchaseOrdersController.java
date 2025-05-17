@@ -4,11 +4,13 @@ import com.example.api.domain.services.PurchaseOrdersService;
 import com.example.api.dto.OrderItems.PurchaseOrdersRequestDto;
 import com.example.api.dto.OrderItems.PurchaseOrdersResponseDto;
 import com.example.api.dto.OrderItems.PurchaseOrdersUpdateDto;
+import com.example.api.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.List;
 public class PurchaseOrdersController {
 
     private final PurchaseOrdersService purchaseOrdersService;
+
+    private final AuthService authService;
 
     @PostMapping
     @Operation(
@@ -33,6 +37,11 @@ public class PurchaseOrdersController {
     @Operation(summary = "somente o usuario pode retornar as ordem de compra")
     public ResponseEntity<List<PurchaseOrdersResponseDto>> findAll() {
         return ResponseEntity.ok(purchaseOrdersService.findAll());
+    }
+
+    @GetMapping("/findByAuth")
+    public ResponseEntity<List<PurchaseOrdersResponseDto>> findAllByUserLogged(Authentication auth) {
+        return ResponseEntity.ok(purchaseOrdersService.findAllByUserLogged(authService.getAuthenticatedUserId(auth)));
     }
 
     @GetMapping("/page")

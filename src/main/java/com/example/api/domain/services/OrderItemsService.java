@@ -36,6 +36,7 @@ public class OrderItemsService {
         PurchaseOrders pedido = purchaseOrdersRepository.findById(dto.getPedidoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
+
         OrderItems item = orderItemsMapper.toEntity(dto);
         item.setProduto(products);
         item.setPedido(pedido);
@@ -44,6 +45,10 @@ public class OrderItemsService {
 
     public List<OrderItemsResponseDto> findAll() {
         return orderItemsRepository.findAll().stream().map(orderItemsMapper::toDto).toList();
+    }
+
+    public List<OrderItemsResponseDto> findAllByUserLogged(Long userId) {
+        return orderItemsRepository.findById(userId).stream().map(orderItemsMapper::toDto).toList();
     }
 
     public Page<OrderItemsResponseDto> findAllByPage(int page, int size) {
