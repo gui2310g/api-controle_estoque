@@ -26,11 +26,6 @@ public class AuthHelper {
     }
 
     public boolean isAdmin() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-
-        Users users = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
-        return users.getRole() == UserRole.ADMINISTRADOR;
+        return getAuthenticatedUser().getRole() == UserRole.ADMINISTRADOR;
     }
 }
