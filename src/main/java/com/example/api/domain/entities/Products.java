@@ -35,4 +35,8 @@ public class Products {
 
     @Column(unique = true)
     private String sku;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Users usuario;
 }

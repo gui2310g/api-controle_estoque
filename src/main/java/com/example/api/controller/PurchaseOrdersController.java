@@ -1,9 +1,10 @@
 package com.example.api.controller;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.domain.services.PurchaseOrdersService;
-import com.example.api.dto.OrderItems.PurchaseOrdersRequestDto;
-import com.example.api.dto.OrderItems.PurchaseOrdersResponseDto;
-import com.example.api.dto.OrderItems.PurchaseOrdersUpdateDto;
+import com.example.api.dto.PurchaseOrders.PurchaseOrdersRequestDto;
+import com.example.api.dto.PurchaseOrders.PurchaseOrdersResponseDto;
+import com.example.api.dto.PurchaseOrders.PurchaseOrdersUpdateDto;
 import com.example.api.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
@@ -22,30 +23,27 @@ public class PurchaseOrdersController {
 
     private final PurchaseOrdersService purchaseOrdersService;
 
-    private final AuthService authService;
+    private final AuthHelper authHelper;
 
     @PostMapping
-    @Operation(
-            summary = "somente o usuario pode criar a ordem de compra",
-            description = "Ao criar uma ordem de compra, o status padrão é PENDENTE"
-    )
+    @Operation(summary = "somente user pode criar pedido", description = "status padrão é PENDENTE")
     public ResponseEntity<PurchaseOrdersResponseDto> create(@RequestBody PurchaseOrdersRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrdersService.create(dto));
     }
 
     @GetMapping
-    @Operation(summary = "somente o usuario pode retornar as ordem de compra")
+    @Operation(summary = "somente o usuario pode retornar os pedidos")
     public ResponseEntity<List<PurchaseOrdersResponseDto>> findAll() {
         return ResponseEntity.ok(purchaseOrdersService.findAll());
     }
 
     @GetMapping("/findByAuth")
-    public ResponseEntity<List<PurchaseOrdersResponseDto>> findAllByUserLogged(Authentication auth) {
-        return ResponseEntity.ok(purchaseOrdersService.findAllByUserLogged(authService.getAuthenticatedUserId(auth)));
+    public ResponseEntity<List<PurchaseOrdersResponseDto>> findAllByUserLogged() {
+        return ResponseEntity.ok(purchaseOrdersService.findAllByUserLogged(authHelper.getAuthenticatedUserId()));
     }
 
     @GetMapping("/page")
-    @Operation(summary = "somente o usuario pode retornar a ordem de compra por paginaçao")
+    @Operation(summary = "somente o usuario pode retornar os pedidos por paginaçao")
     public ResponseEntity<Page<PurchaseOrdersResponseDto>> findAllByPage(
             @RequestParam int page,
             @RequestParam int size
@@ -54,13 +52,13 @@ public class PurchaseOrdersController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "somente o usuario pode retornar a ordem de compra por id")
+    @Operation(summary = "somente o usuario pode retornar o pedido por id")
     public ResponseEntity<PurchaseOrdersResponseDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(purchaseOrdersService.findById(id));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "atualiza a ordem de compra de acordo com o status", description =
+    @Operation(summary = "atualiza o pedido de acordo com o status", description =
             "o usuario pode atualizar se estiver como pendente, o admin pode atualizar para aprovado ou reprovado"
     )
     public ResponseEntity<PurchaseOrdersResponseDto> update(
@@ -71,7 +69,7 @@ public class PurchaseOrdersController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "somente o admin pode deletar o a ordem de compra")
+    @Operation(summary = "somente o admin pode deletar o pedido")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         purchaseOrdersService.delete(id);
         return ResponseEntity.noContent().build();

@@ -42,17 +42,20 @@ public class SecurityConfig {
                                 "/products", "/categories", "/movements",
                                 "/suppliers", "/order-items", "/purchase-orders")
                         .hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/usuarios", "/products/**", "/order-items").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios", "/products/**", "/order-items/**")
+                        .hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/suppliers/**", "/purchase-orders/**", "/categories/**")
-                        .hasRole("ADMIN")
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE,
                                 "/products/**", "/categories/**", "/alerts/**",
                                 "/suppliers/**", "/purchase-orders/**", "/order-items/**")
                         .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,
-                                "/categories/**", "/products/**", "/alerts", "/suppliers/**", "/order-items/**")
+                                "/categories/**", "/products/**","/suppliers/**", "/order-items/**")
                         .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/purchase-orders/**", "/movements/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/alerts/**", "/purchase-orders/**", "/movements/**")
+                        .hasRole("ADMIN")
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class).build();

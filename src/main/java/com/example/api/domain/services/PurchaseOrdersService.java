@@ -1,17 +1,19 @@
 package com.example.api.domain.services;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.common.components.PaginationType;
 import com.example.api.domain.entities.PurchaseOrders;
 import com.example.api.domain.entities.Suppliers;
 import com.example.api.domain.enums.PurchaseStatus;
+import com.example.api.domain.exceptions.ResourceAccessDeniedException;
 import com.example.api.domain.exceptions.ResourceBadRequestException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import com.example.api.domain.mappers.PurchaseOrderMapper;
 import com.example.api.domain.repositories.PurchaseOrdersRepository;
 import com.example.api.domain.repositories.SupplierRepository;
-import com.example.api.dto.OrderItems.PurchaseOrdersRequestDto;
-import com.example.api.dto.OrderItems.PurchaseOrdersResponseDto;
-import com.example.api.dto.OrderItems.PurchaseOrdersUpdateDto;
+import com.example.api.dto.PurchaseOrders.PurchaseOrdersRequestDto;
+import com.example.api.dto.PurchaseOrders.PurchaseOrdersResponseDto;
+import com.example.api.dto.PurchaseOrders.PurchaseOrdersUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,11 +30,13 @@ public class PurchaseOrdersService {
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final PaginationType<PurchaseOrders, PurchaseOrdersResponseDto> paginationType;
     private final SupplierRepository supplierRepository;
+    private final AuthHelper authHelper;
 
     public PurchaseOrdersResponseDto create(PurchaseOrdersRequestDto dto) {
         Suppliers fornecedor = supplierRepository.findById(dto.getFornecedorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
 
+        if(authHelper.isAdmin()) throw new ResourceAccessDeniedException("Somente o usuario pode criar o pedido");
         PurchaseOrders pedido = purchaseOrderMapper.toEntity(dto);
         pedido.setFornecedores(fornecedor);
         pedido.setData(new Date());

@@ -1,7 +1,9 @@
 package com.example.api.domain.services;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.domain.entities.Users;
 import com.example.api.domain.enums.UserRole;
+import com.example.api.domain.exceptions.ResourceAccessDeniedException;
 import com.example.api.domain.exceptions.ResourceBadRequestException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import com.example.api.domain.mappers.UserMapper;
@@ -21,10 +23,9 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final UserMapper userMapper;
-
     private final PasswordEncoder passwordEncoder;
+    private final AuthHelper authHelper;
 
     public UserResponseDto create(UserRequestDto dto) {
         if(userRepository.findByEmail(dto.getEmail()).isPresent())
@@ -50,8 +51,7 @@ public class UserService {
         findById(id);
         Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(user.getRole().equals(UserRole.ADMINISTRADOR))
-            throw new ResourceBadRequestException("O admin não pode atualizar");
+        if(authHelper.isAdmin()) throw new ResourceAccessDeniedException("Admin não pode atualizar");
 
         user.setId(id);
         user.setNome(dto.getNome());

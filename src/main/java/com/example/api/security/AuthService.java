@@ -19,9 +19,4 @@ public class AuthService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Email não achado"));
     }
-
-    public Long getAuthenticatedUserId(Authentication authentication) {
-        return userRepository.findByEmail(authentication.getName())
-                .map(Users::getId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-    }
 }

@@ -1,7 +1,7 @@
-package com.example.api.dto.OrderItems;
+package com.example.api.dto.PurchaseOrders;
 
 import com.example.api.domain.enums.PurchaseStatus;
-import com.example.api.dto.PurchaseOrders.OrderItemsDetailsDto;
+import com.example.api.dto.OrderItems.OrderItemsDetailsDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class PurchaseOrdersResponseDto {
     private Long id;
+    private Long userId;
     private Long fornecedorId;
     private PurchaseStatus status;
 

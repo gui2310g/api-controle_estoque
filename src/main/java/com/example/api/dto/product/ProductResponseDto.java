@@ -10,6 +10,8 @@ import lombok.Data;
 public class ProductResponseDto {
     private Long id;
 
+    private Long userId;
+
     private String nome;
 
     private String descricao;

@@ -1,4 +1,4 @@
-package com.example.api.dto.PurchaseOrders;
+package com.example.api.dto.OrderItems;
 
 import lombok.Data;
 

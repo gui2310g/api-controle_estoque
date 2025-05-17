@@ -1,8 +1,9 @@
 package com.example.api.controller;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.domain.services.OrderItemsService;
-import com.example.api.dto.PurchaseOrders.OrderItemsRequestDto;
-import com.example.api.dto.PurchaseOrders.OrderItemsResponseDto;
+import com.example.api.dto.OrderItems.OrderItemsRequestDto;
+import com.example.api.dto.OrderItems.OrderItemsResponseDto;
 import com.example.api.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,8 @@ public class OrderItemsController {
 
     private final OrderItemsService orderItemsService;
 
-    private final AuthService authService;
+    private final AuthHelper authHelper;
+
 
     @GetMapping
     public ResponseEntity<List<OrderItemsResponseDto>> findAll() {
@@ -43,18 +45,18 @@ public class OrderItemsController {
     }
 
     @GetMapping("/findByAuth")
-    public ResponseEntity<List<OrderItemsResponseDto>> findAllByUserLogged(Authentication auth) {
-        return ResponseEntity.ok(orderItemsService.findAllByUserLogged(authService.getAuthenticatedUserId(auth)));
+    public ResponseEntity<List<OrderItemsResponseDto>> findAllByUserLogged() {
+        return ResponseEntity.ok(orderItemsService.findAllByUserLogged(authHelper.getAuthenticatedUserId()));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "somente o usuario pode atualizar o item de pedido")
+    @Operation(description = "o usuario somente os seus proprios, admin pode atualizar os itens de outros usuarios")
     public ResponseEntity<OrderItemsResponseDto> update(@PathVariable Long id, @RequestBody OrderItemsRequestDto dto) {
-        return ResponseEntity.ok(orderItemsService.update(id, dto));
+        return ResponseEntity.ok(orderItemsService.update(id, dto, authHelper.getAuthenticatedUserId()));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "somente o admin pode deletar o item de pedido")
+    @Operation(summary = "somente o admin pode deletar o item do pedido")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         orderItemsService.delete(id);
         return ResponseEntity.noContent().build();

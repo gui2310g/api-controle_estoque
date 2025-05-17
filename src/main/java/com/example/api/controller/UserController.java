@@ -1,6 +1,7 @@
 package com.example.api.controller;
 
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.domain.services.UserService;
 import com.example.api.dto.user.UserRequestDto;
 import com.example.api.dto.user.UserResponseDto;
@@ -21,7 +22,7 @@ public class UserController {
 
     private UserService userService;
 
-    private AuthService authService;
+    private AuthHelper authHelper;
 
     @PostMapping
     public ResponseEntity<UserResponseDto> create(@RequestBody UserRequestDto request) {
@@ -42,8 +43,8 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "somente o usuario pode se atualizar")
-    public ResponseEntity<UserResponseDto> update(Authentication authentication, @RequestBody UserRequestDto request) {
-        return ResponseEntity.ok(userService.update(authService.getAuthenticatedUserId(authentication), request));
+    public ResponseEntity<UserResponseDto> update(@RequestBody UserRequestDto request) {
+        return ResponseEntity.ok(userService.update(authHelper.getAuthenticatedUserId(), request));
     }
 
     @DeleteMapping("/{id}")

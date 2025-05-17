@@ -1,7 +1,9 @@
 package com.example.api.domain.services;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.common.components.PaginationType;
 import com.example.api.domain.entities.Categories;
+import com.example.api.domain.exceptions.ResourceAccessDeniedException;
 import com.example.api.domain.exceptions.ResourceBadRequestException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import com.example.api.domain.mappers.CategoryMapper;
@@ -20,15 +22,15 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-
     private final CategoryMapper categoryMapper;
-
     private final PaginationType<Categories, CategoryResponseDto> paginationType;
+    private final AuthHelper authHelper;
 
     public CategoryResponseDto create(CategoryRequestDto dto) {
         if(categoryRepository.findByNome(dto.getNome()).isPresent())
             throw new ResourceNotFoundException("Categoria ja existente");
 
+        if(authHelper.isAdmin()) throw new ResourceAccessDeniedException("Apenas o usuario pode criar uma categoria");
         Categories categoria = categoryMapper.toEntity(dto);
         return categoryMapper.toDto(categoryRepository.save(categoria));
     }

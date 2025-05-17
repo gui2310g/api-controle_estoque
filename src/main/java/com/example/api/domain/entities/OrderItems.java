@@ -22,4 +22,8 @@ public class OrderItems {
 
     @Column(nullable = false)
     private int preco;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Users usuario;
 }

@@ -1,13 +1,16 @@
 package com.example.api.controller;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.domain.services.ProductService;
 import com.example.api.dto.product.ProductRequestDto;
 import com.example.api.dto.product.ProductResponseDto;
+import com.example.api.security.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final AuthHelper authHelper;
 
     @PostMapping
     @Operation(summary = "somente o usuario pode criar o produto")
@@ -31,9 +35,9 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "somente o usuario pode atualizar o produto")
+    @Operation(description = "o usuario somente os seus proprios, admin pode atualizar os produtos de outros usuarios")
     public ResponseEntity<ProductResponseDto> update(@PathVariable Long id, @RequestBody ProductRequestDto dto) {
-        return ResponseEntity.ok(productService.update(id, dto));
+        return ResponseEntity.ok(productService.update(id, dto, authHelper.getAuthenticatedUserId()));
     }
 
     @DeleteMapping("/{id}")

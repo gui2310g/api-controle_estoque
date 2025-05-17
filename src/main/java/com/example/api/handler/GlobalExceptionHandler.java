@@ -2,6 +2,7 @@ package com.example.api.handler;
 
 import com.example.api.common.components.ConversorData;
 import com.example.api.domain.exceptions.ErrorResponse;
+import com.example.api.domain.exceptions.ResourceAccessDeniedException;
 import com.example.api.domain.exceptions.ResourceBadRequestException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,18 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceAccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAcessDeniedException(ResourceAccessDeniedException ex) {
+        ErrorResponse message = new ErrorResponse(
+                dateHour,
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
+                ex.getMessage()
+        );
+
+        return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
     }
 }
 

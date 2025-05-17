@@ -1,9 +1,11 @@
 package com.example.api.domain.services;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.common.events.MovementEventPublisher;
 import com.example.api.domain.entities.Movements;
 import com.example.api.domain.entities.Products;
 import com.example.api.domain.enums.MovementsType;
+import com.example.api.domain.exceptions.ResourceAccessDeniedException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import com.example.api.domain.mappers.MovementsMapper;
 import com.example.api.domain.repositories.MovementsRepository;
@@ -24,6 +26,7 @@ public class MovementsService {
     private final ProductRepository productRepository;
     private final MovementEventPublisher eventPublisher;
     private final MovementsMapper movementsMapper;
+    private final AuthHelper authHelper;
 
     public MovementsResponseDto create(MovementsRequestDto dto) {
         Products product = productRepository.findById(dto.getProdutoId())
@@ -45,6 +48,8 @@ public class MovementsService {
         }
 
         if(dto.getQuantidade() == 0) throw new ResourceNotFoundException("Quantidade não pode ser zero");
+
+        if (authHelper.isAdmin()) throw new ResourceAccessDeniedException("Apenas o usuario pode criar um movimento");
 
         Movements savedMovement = movementRepository.save(movement);
 

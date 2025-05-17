@@ -1,6 +1,8 @@
 package com.example.api.domain.services;
 
+import com.example.api.common.components.AuthHelper;
 import com.example.api.domain.entities.Suppliers;
+import com.example.api.domain.exceptions.ResourceAccessDeniedException;
 import com.example.api.domain.exceptions.ResourceNotFoundException;
 import com.example.api.domain.mappers.SupplierMapper;
 import com.example.api.domain.repositories.SupplierRepository;
@@ -17,8 +19,11 @@ public class SupplierService {
 
     private final SupplierRepository supplierRepository;
     private final SupplierMapper supplierMapper;
+    private final AuthHelper authHelper;
 
     public SupplierResponseDto create(SupplierRequestDto dto) {
+        if(authHelper.isAdmin()) throw new ResourceAccessDeniedException("Somente o usuario pode criar um fornecedor");
+
         Suppliers entity = supplierMapper.toEntity(dto);
         return supplierMapper.toDto(supplierRepository.save(entity));
     }
